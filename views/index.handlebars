@@ -1,0 +1,76 @@
+<h1>Cats!</h1>
+
+<h2>Cats that are not sleepy!</h2>
+
+<ul>
+  {{#each burgers}}
+    {{#unless devoured}}
+      <li>
+        {{burger_name}}
+
+        <button class="change-burger" data-id="{{id}}">
+          DEVOUR
+        </button>
+      </li>
+    {{/unless}}
+  {{/each}}
+</ul>
+
+<h2>Cats that are sleepy!</h2>
+
+<ul>
+  {{#each burgers}}
+    {{#if devoured}}
+      <li>
+        {{burger_name}}
+      </li>
+    {{/if}}
+  {{/each}}
+</ul>
+
+<h2>Add a Cat</h2>
+<form class="create-form">
+
+  <div class="form-group">
+    <label for="ca">Burger Name:</label>
+    <input type="text" id="ca" name="name">
+  </div>
+
+  <button type="submit">Add Burger</button>
+</form>
+
+<script>
+    $(".change-burger").on("click", function(event){
+        var id = $(this).data("id");
+
+        $.ajax("/api/burgers/" + id, {
+            type: "PUT",
+        }).then(
+            function(response) {
+                console.log("ate the burger yum yum");
+                // Reload the page to get the updated list
+                location.reload();
+                console.log(response)
+            }
+        );
+    });
+
+    $(".create-form").on("submit", function(event){
+        event.preventDefault();
+
+        var newBurger = {
+            burger_name: $("#ca").val().trim()
+        }
+        
+        $.ajax("/api/burgers", {
+            type: "POST",
+            data: newBurger
+        }).then(
+            function() {
+                console.log("created new cat");
+                // Reload the page to get the updated list
+                location.reload();
+            }
+        );
+    })    
+</script>
